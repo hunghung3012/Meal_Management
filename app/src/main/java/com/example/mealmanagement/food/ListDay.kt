@@ -1,33 +1,23 @@
 package com.example.mealmanagement.food
 
-import android.graphics.drawable.shapes.RoundRectShape
-import android.os.Build
-import androidx.annotation.RequiresApi
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 
@@ -38,47 +28,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
-import com.example.mealmanagement.menu.Menu
 import com.example.mealmanagement.menu.TextInter
 import com.example.mealmanagement.model.MenuData
 import com.example.mealmanagement.ui.theme.GrayText
-import com.example.mealmanagement.ui.theme.GreenBackGround
 import com.example.mealmanagement.ui.theme.GreenText
-import com.example.mealmanagement.ui.theme.PinkBackGround
-import com.example.mealmanagement.ui.theme.PinkText
-import com.example.mealmanagement.ui.theme.inter_bold
-import com.example.mealmanagement.ui.theme.inter_extrabold
-import com.example.mealmanagement.ui.theme.inter_light
-import com.example.mealmanagement.ui.theme.inter_medium
-import com.example.mealmanagement.ui.theme.kanit_bold
-import com.example.mealmanagement.ui.theme.kanit_ragular
 import com.example.mealmanagement.viewmodel.MenuViewModel
 
-import java.nio.file.WatchEvent
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun ListDay(navController: NavController,menuViewModel: MenuViewModel,menuID:String) {
-    val menu by menuViewModel.getMenuById(menuID).observeAsState(initial = null)
+val menu by menuViewModel.getMenuById(menuID).observeAsState(initial = null)
+
     BaseScreen {
         Column {
             Row(
@@ -88,42 +60,54 @@ fun ListDay(navController: NavController,menuViewModel: MenuViewModel,menuID:Str
                 horizontalArrangement = Arrangement.Center,
 
             ) {
-                TextInter(text = "Chọn thứ", color = GreenText, size = 18)
+                TextInter(text ="Chọn thứ", color = GreenText, size = 18)
             }
             Spacer(modifier = Modifier.height(3.dp))
-//            ListDayComponent()
-            Spacer(modifier = Modifier.height(100.dp))
+            ListDayComponent(navController,menuID)
             Spacer(modifier = Modifier.height(100.dp))
             //helo
 
-//            NameItem(menu!!,menuViewModel)
+            menu?.let {
+                // Sử dụng menu nếu không null
+                NameItem(it, menuViewModel)
+            } ?: run {
+                // Hiển thị thông báo nếu menu là null
+                Text(text = "Menu data is loading or not available")
+            }
         }
        
 
     }
 }
 @Composable
-fun ListDayComponent() {
+fun ListDayComponent(navController: NavController,menuID:String) {
     Column(
 
     ) {
         val days = (2..7).toList()
+        val arrDay = listOf<String> (
+            "Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ Nhật"
+        )
         // Sử dụng forEach để lặp qua danh sách và gọi DayItem cho từng phần tử
-        days.forEach { day ->
-            DayItem("Thứ "+day.toString())
+        //use index to get the day of the week
+        arrDay.forEachIndexed  { index,day ->
+            DayItem(day,index.toString(),navController,menuID)
         }
-        DayItem("Chủ Nhật")
+
     }
     }
 
 @Composable
-fun DayItem(day:String) {
+fun DayItem(day:String,index:String,navController: NavController,menuID:String) {
     Button(
         contentPadding = PaddingValues(15.dp, 16.dp),
         shape = RoundedCornerShape(0.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
         border = BorderStroke(1.dp, Color(229, 229, 229)),
-        onClick = { /*TODO*/ }) {
+        onClick = {
+            navController.navigate("detailMeal/${menuID}/${index}")
+
+        }) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -143,8 +127,11 @@ fun DayItem(day:String) {
    
 
 }
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NameItem(menu:MenuData, menuViewModel: MenuViewModel) {
+fun NameItem(menu: MenuData, menuViewModel: MenuViewModel) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var context = LocalContext.current
     var thucDonName by remember { mutableStateOf(menu.TenThucDon) }
 
     Row (verticalAlignment = Alignment.CenterVertically,
@@ -163,6 +150,8 @@ fun NameItem(menu:MenuData, menuViewModel: MenuViewModel) {
             onClick = {
                 menu.TenThucDon = thucDonName
                 menuViewModel.updateMenu(menu)
+                makeToast(context)
+                keyboardController?.hide()
             }) {
             Icon(painter = painterResource(id =  R.drawable.baseline_check_circle_24),
                 contentDescription = null ,
@@ -170,4 +159,7 @@ fun NameItem(menu:MenuData, menuViewModel: MenuViewModel) {
                 tint = GreenText)
         }
     }
+}
+fun makeToast(context:Context) {
+    Toast.makeText(context, "Successfully saved data", Toast.LENGTH_SHORT).show()
 }

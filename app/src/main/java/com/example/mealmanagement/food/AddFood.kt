@@ -48,7 +48,7 @@ import com.example.mealmanagement.ui.theme.PinkText
 fun AddFood() {
     BaseScreen {
         Column {
-            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0 )
+//            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0 )
             LazyColumn (
                 modifier = Modifier.padding(20.dp)
             )

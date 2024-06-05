@@ -50,6 +50,7 @@ import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
 import com.example.mealmanagement.menu.ButtonBack
 import com.example.mealmanagement.menu.Menu
+import com.example.mealmanagement.model.MenuData
 import com.example.mealmanagement.ui.theme.GreenBackGround
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.ui.theme.PinkBackGround
@@ -76,12 +77,12 @@ fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: 
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BannerItem(148,R.drawable.banner_2,"Tổng số: ${thucDonList.size} thực đơn",23)
+            BannerItem(148,R.drawable.banner_2,"Tổng số: ${thucDonList.size} thực đơn",23,navController)
             Spacer(modifier = Modifier.height(10.dp))
             SelectButton()
             Spacer(modifier = Modifier.height(10.dp))
             thucDonList.forEach { thucDon ->
-                SingleMeal(thucDon.TenThucDon,thucDon.IDThucDon,navController)
+                SingleMeal(thucDon,navController)
             }
             Spacer(modifier = Modifier.height(10.dp))
             ButtonPlus()
@@ -91,7 +92,9 @@ fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: 
 
 
 @Composable
-fun BannerItem(height:Int,img:Int,text:String,fontSize:Int) {
+fun BannerItem(
+    height:Int,img:Int,text:String,fontSize:Int,
+    navController: NavController) {
     Box(
         modifier = Modifier.fillMaxWidth(),
 
@@ -108,7 +111,7 @@ fun BannerItem(height:Int,img:Int,text:String,fontSize:Int) {
                 .clip(RoundedCornerShape(15.dp))
 
         )
-        ButtonBack(modifier = Modifier.offset(x = 10.dp, y = 5.dp))
+        ButtonBack(modifier = Modifier.offset(x = 10.dp, y = 5.dp),navController )
         Text(text =text,
             modifier = Modifier.align(Alignment.Center),
             fontSize = fontSize.sp,
@@ -155,13 +158,13 @@ fun SingleButton(color:Color,backGround :Color, icon: Int) {
 //}
 
 @Composable
-fun SingleMeal(thucDonName: String,id:String,navController: NavController){
+fun SingleMeal(menu:MenuData,navController: NavController){
     Button(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(GreenBackGround),
         contentPadding = PaddingValues(10.dp, 16.dp),
-        onClick = { navController.navigate("listDay/${id}") }) {
+        onClick = { navController.navigate("listDay/${menu.IDThucDon}") }) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -175,7 +178,7 @@ fun SingleMeal(thucDonName: String,id:String,navController: NavController){
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = id,
+                text = menu.TenThucDon,
                 color = GreenText,
                 fontSize = 20.sp,
                 fontFamily = inter_bold,

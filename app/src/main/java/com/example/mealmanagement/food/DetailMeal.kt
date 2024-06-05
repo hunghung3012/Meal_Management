@@ -1,5 +1,6 @@
 package com.example.mealmanagement.food
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -23,6 +24,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,17 +36,55 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
+import com.example.mealmanagement.model.FoodData
+import com.example.mealmanagement.model.MealData
 import com.example.mealmanagement.ui.theme.BlackText
 import com.example.mealmanagement.ui.theme.GreenBackGround2
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.ui.theme.inter_bold
 import com.example.mealmanagement.ui.theme.inter_light
-
+import com.example.mealmanagement.viewmodel.DetailMealViewModel
+import com.example.mealmanagement.viewmodel.FoodViewModel
+import com.example.mealmanagement.viewmodel.MealViewModel
 data class MealItem(val name: String, val calories: String)
 @Composable
-fun DetailMeal() {
+fun DetailMeal(navController: NavController,idMenu:String,day:String,mealModel:MealViewModel,detailMealViewModel:DetailMealViewModel,foodViewModel: FoodViewModel) {
+    val mealList by mealModel.getMealsByMenuId(idMenu).observeAsState(initial = emptyList())
+    val mealListDay = mutableListOf<MealData>()
+    mealList.forEach {
+        if(it.day.toString().equals(day) ) {
+            mealListDay.add(it)
+        }
+    }
+    var mealId = ""
+    mealListDay.forEach( {
+        if(it.name == "Breakfast") {
+            mealId = it.idMeal
+        }
+    }
+    )
+    val detailMealList by detailMealViewModel.getDetailMealsByMealId(mealId).observeAsState(initial = emptyList())
+
+    // For each DetailMealData, get the FoodData by idFood
+    val foodList = mutableListOf<FoodData>()
+    detailMealList.forEach { detailMeal ->
+        val food by foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null)
+        food?.let {
+            foodList.add(it)
+        }
+
+    }
+
+
+
+//Tets
+    Log.d("MealList", "Size: ${detailMealList.size}")
+    foodList.forEach { meal ->
+        Log.d("MealList","day: ${day} ID: ${meal.idFood}, Name: ${meal.name},")
+    }
     BaseScreen {
         Column(
             modifier = Modifier
@@ -51,29 +92,14 @@ fun DetailMeal() {
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BannerItem(98,R.drawable.banner_2,"Thực đơn hôm nay",26)
+            Text(text = idMenu)
+//            Text(text = day)
+
+            BannerItem(98,R.drawable.banner_2,"Thực đơn hôm nay",26,navController)
             Spacer(modifier = Modifier.height(10.dp))
             LazyColumn {
                 item {
-                    ListTest("Buổi Sáng", listOf(
-                        MealItem("Cơm xào ốc hến", "102"),
-                        MealItem("Bánh tráng trộn", "106"),
-                        MealItem("Bít tết xào", "203")
-                    ))
-                }
-                item {
-                    ListTest("Buổi Trưa", listOf(
-                        MealItem("Phở bò", "150"),
-                        MealItem("Cơm tấm", "250"),
-                        MealItem("Gà nướng", "300")
-                    ))
-                }
-                item {
-                    ListTest("Buổi Tối", listOf(
-                        MealItem("Salad rau", "80"),
-                        MealItem("Soup gà", "120"),
-                        MealItem("Cá kho", "200")
-                    ))
+//                    ListTest("Buổi Sáng",foodList)
                 }
                 item {
                    Spacer(modifier = Modifier.height(100.dp) )
@@ -84,12 +110,12 @@ fun DetailMeal() {
     }
 }
 @Composable
-fun ListTest(time: String, mealList: List<MealItem>) {
+fun ListTest(time: String, mealList: List<FoodData>) {
     Column {
         TimeMeal(time)
         Spacer(modifier = Modifier.height(10.dp))
         mealList.forEach { meal ->
-            TimeMealItem(meal.name, meal.calories)
+            TimeMealItem(meal.name, meal.totalCalo.toString())
             Spacer(modifier = Modifier.height(10.dp))
         }
         ButtonPlus()

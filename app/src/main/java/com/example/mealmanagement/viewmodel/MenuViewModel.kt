@@ -36,7 +36,12 @@ class MenuViewModel : ViewModel() {
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val menu = snapshot.getValue(MenuData::class.java)
-                    menuData.value = menu
+                    menu?.let {
+                        menuData.value = it
+                    } ?: run {
+                        // Handle trường hợp menu là null nếu cần thiết
+                        // Ví dụ: ghi log hoặc thông báo lỗi
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -46,6 +51,7 @@ class MenuViewModel : ViewModel() {
 
         return menuData
     }
+
     fun getThucDonByUserId(userId: String): LiveData<List<MenuData>> {
         val thucDonList = MutableLiveData<List<MenuData>>()
 

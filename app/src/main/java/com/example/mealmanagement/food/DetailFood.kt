@@ -40,7 +40,7 @@ import com.example.mealmanagement.ui.theme.PinkText
 fun DetailFood() {
     BaseScreen {
         Column {
-            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0 )
+//            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0 )
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {

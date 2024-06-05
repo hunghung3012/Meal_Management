@@ -39,7 +39,7 @@ fun FindFood() {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            BannerItem(height = 98, img = R.drawable.banner_2, text = "Lựa chọn món ăn", fontSize =22 )
+//            BannerItem(height = 98, img = R.drawable.banner_2, text = "Lựa chọn món ăn", fontSize =22 )
             SingleButton(GreenText, GreenBackGround,R.drawable.baseline_emoji_people_24)
             SerchBar()
 

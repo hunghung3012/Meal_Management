@@ -78,7 +78,7 @@ fun MyFood() {
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BannerItem(100,R.drawable.banner_2,"Món Ăn Của Bạn",23)
+//            BannerItem(100,R.drawable.banner_2,"Món Ăn Của Bạn",23)
             Spacer(modifier = Modifier.height(10.dp))
             SelectMyMeal()
             Spacer(modifier = Modifier.height(10.dp))

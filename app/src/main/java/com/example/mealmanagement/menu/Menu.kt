@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.ui.theme.GreenBackGround
 import com.example.mealmanagement.ui.theme.GreenText
@@ -90,14 +91,15 @@ fun TextInter(text:String,color:Color, size:Int) {
 @Composable
 fun ButtonBack(
     modifier: Modifier,
-
+    navController:NavController
 ) {
     Button(
         modifier= modifier.size(30.dp),
         colors = ButtonDefaults.buttonColors(containerColor = GreenText),
         contentPadding = PaddingValues(0.dp),
-        onClick = { /*TODO*/ }
-
+        onClick = {
+            navController.navigateUp()
+        }
     ) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_arrow_back_24),

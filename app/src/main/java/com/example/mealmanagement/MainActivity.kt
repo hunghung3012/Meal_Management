@@ -28,18 +28,26 @@ import com.example.mealmanagement.home.ImagePickerApp
 
 
 import com.example.mealmanagement.menu.Menu
+import com.example.mealmanagement.model.DetailMealData
+import com.example.mealmanagement.model.FoodData
+import com.example.mealmanagement.model.MealData
 import com.example.mealmanagement.model.MenuData
 import com.example.mealmanagement.test.AddDataScreen
 import com.example.mealmanagement.test.GetDataScreen
 import com.example.mealmanagement.test.SharedViewModel
 import com.example.mealmanagement.ui.theme.MealManagementTheme
+import com.example.mealmanagement.viewmodel.DetailMealViewModel
+import com.example.mealmanagement.viewmodel.FoodViewModel
+import com.example.mealmanagement.viewmodel.MealViewModel
 import com.example.mealmanagement.viewmodel.MenuViewModel
 
 
 class MainActivity : ComponentActivity() {
     private val sharedViewModel: SharedViewModel by viewModels()
     private val menuViewModel: MenuViewModel by viewModels()
-
+    private val foodViewModel: FoodViewModel by viewModels()
+    private val detailMealViewModel: DetailMealViewModel by viewModels()
+    private val mealViewModel: MealViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +60,9 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Navigation()
+//                    addTestDetailMeals()
                 }
+
             }
         }
     }
@@ -66,6 +76,47 @@ class MainActivity : ComponentActivity() {
         menuViewModel.saveMenu(thucDon1, this)
         menuViewModel.saveMenu(thucDon2, this)
         menuViewModel.saveMenu(thucDon3, this)
+    }
+    fun addTestFood() {
+        val food1 = FoodData("", "Bánh mì", "Bánh mì, thịt, rau sống", 250.0, "Nướng", "123 Đường ABC")
+        val food2 = FoodData("", "Phở", "Phở bò", 350.0, "Luộc", "456 Đường XYZ")
+        val food3 = FoodData("", "Gỏi cuốn", "Tôm, thịt, rau sống", 150.0, "Cuốn", "789 Đường LMN")
+        val food4 = FoodData("", "Cơm rang", "Cơm, thịt, rau cải", 400.0, "Xào", "101 Đường PQR")
+        val food5 = FoodData("", "Bún chả", "Bún, thịt heo nướng", 300.0, "Nướng", "202 Đường STU")
+
+        foodViewModel.saveFood(food1, this)
+        foodViewModel.saveFood(food2, this)
+        foodViewModel.saveFood(food3, this)
+        foodViewModel.saveFood(food4, this)
+        foodViewModel.saveFood(food5, this)
+    }
+    fun addTestMeals() {
+
+        val meal1 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Breakfast", 0)
+        val meal2 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Lunch", 0)
+        val meal3 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Dinner", 1)
+        val meal4 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Breakfast", 1)
+        val meal5 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Lunch", 2)
+
+        mealViewModel.saveMeal(meal1, this)
+        mealViewModel.saveMeal(meal2, this)
+        mealViewModel.saveMeal(meal3, this)
+        mealViewModel.saveMeal(meal4, this)
+        mealViewModel.saveMeal(meal5, this)
+    }
+    fun addTestDetailMeals() {
+
+        val meal1 = DetailMealData("", "-NzcTMGJOrUe862SdtZl", "-Nzbnul2ttC9I1D1luXV", 2)
+        val meal2 = DetailMealData("", "-NzcTMGJOrUe862SdtZl", "-Nzbnul2ttC9I1D1luXV", 1)
+        val meal3 = DetailMealData("", "-NzcTMGJOrUe862SdtZl", "--NzbnulG8oQpqqQNFERN", 3)
+        val meal4 = DetailMealData("", "-NzcTMGQHC1SD_TAetS3", "-NzbnulJyI_i1zzDB4av", 1)
+        val meal5 = DetailMealData("", "-NzcTMGQHC1SD_TAetS3", "-Nzbnul4Ojq5eqyonilZ", 2)
+
+        detailMealViewModel.saveDetailMeal(meal1, this)
+        detailMealViewModel.saveDetailMeal(meal2, this)
+        detailMealViewModel.saveDetailMeal(meal3, this)
+        detailMealViewModel.saveDetailMeal(meal4, this)
+        detailMealViewModel.saveDetailMeal(meal5, this)
     }
 }
 
