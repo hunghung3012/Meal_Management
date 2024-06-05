@@ -93,6 +93,7 @@ fun ListDay(navController: NavController,menuViewModel: MenuViewModel,menuID:Str
             Spacer(modifier = Modifier.height(3.dp))
 //            ListDayComponent()
             Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
 //            NameItem(menu!!,menuViewModel)
         }
