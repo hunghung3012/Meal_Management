@@ -2,6 +2,7 @@ package com.example.mealmanagement.food
 
 
 
+import android.util.Log
 import android.widget.Button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -51,11 +52,12 @@ import com.example.mealmanagement.ui.theme.PinkText
 import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 
+
 @Composable
-fun DetailMyFood(navController: NavController,foodId:String,mealId:String,foodViewModel: FoodViewModel,detailMealViewModel: DetailMealViewModel) {
-    val food = foodViewModel.getFoodById(foodId).observeAsState().value ?: FoodData()
+fun DetailMyFood(navController: NavController,detail:DetailMealData,foodViewModel: FoodViewModel,detailMealViewModel: DetailMealViewModel) {
+    val food = foodViewModel.getFoodById(detail.idFood).observeAsState().value ?: FoodData()
     var context = LocalContext.current
-    var count by remember { mutableStateOf(1) }
+    var count by remember { mutableStateOf(detail.quantity) }
     BaseScreen(navController) {
         Column {
             BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0,navController )
@@ -83,18 +85,17 @@ fun DetailMyFood(navController: NavController,foodId:String,mealId:String,foodVi
                     {count++},
                     {if(count>1)  count--},
                     {
-                        //add to cart
-                        detailMealViewModel.saveDetailMeal(
-                            DetailMealData(
-                                idMeal = mealId,
-                                idFood = foodId,
-                                quantity = count,
-
-                                ),
-                            context
-                        )
+                        //aupdate to cart
+                        var detailMealItem = DetailMealData(detail.idDetailMeal,detail.idMeal,detail.idFood,count)
+                        detailMealViewModel.updateDetailMeal(detailMealItem,context)
+                        navController.navigateUp()
 
 
+                    },
+                    {
+                        //remove from cart
+                           detailMealViewModel.deleteDetailMealsByID(detail.idDetailMeal,context)
+                            navController.navigateUp()
 
                     }
                 )
@@ -123,7 +124,8 @@ fun ButtonChange2(
     count:Int,
     plus:()->Unit,
     minus:()->Unit,
-    add:()->Unit
+    update:()->Unit,
+    remove:()->Unit
 ) {
 
     Row(
@@ -170,7 +172,7 @@ fun ButtonChange2(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PinkText),
                 onClick = {
-
+                    update()
 
                 }){
                 Text(text = "Câp nhật",
@@ -182,7 +184,7 @@ fun ButtonChange2(
                 shape = RoundedCornerShape(12.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = PinkBackGround),
                 onClick = {
-
+                remove()
                 }){
                 Text(text = "Xóa",
                     color = BlackText)

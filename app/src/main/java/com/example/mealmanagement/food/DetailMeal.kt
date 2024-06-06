@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
+import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.model.FoodData
 import com.example.mealmanagement.model.MealData
 import com.example.mealmanagement.ui.theme.BlackText
@@ -57,7 +58,11 @@ import com.example.mealmanagement.viewmodel.MealViewModel
 data class MealItem(val name: String, val calories: String)
 data class FoodDetail(
     val food: FoodData,
-    val quantity: Int
+    val detailMealData: DetailMealData
+)
+data class DetailMeal(
+    val foodID: FoodData,
+    val detailMealData: DetailMealData
 )
 @Composable
 fun DetailMeal(navController: NavController,idMenu:String,day:String,mealModel:MealViewModel,detailMealViewModel:DetailMealViewModel,foodViewModel: FoodViewModel) {
@@ -151,7 +156,7 @@ fun MealTypeSection(
             detailMealList.forEach { detailMeal ->
                 val food by foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null)
                 food?.let {
-                    foodList.add(FoodDetail(it,detailMeal.quantity))
+                    foodList.add(FoodDetail(it, DetailMealData(detailMeal.idDetailMeal, detailMeal.idFood, detailMeal.idMeal, detailMeal.quantity)))
                 }
             }
             ListTest(navController,foodList,mealId,detailMealViewModel)
@@ -182,8 +187,8 @@ fun ListTest( navController: NavController,mealList: List<FoodDetail>,mealId:Str
 
         mealList.forEach { meal ->
 
-            TimeMealItem(meal.food.name,meal.food.totalCalo.toString(),meal.quantity) {
-                navController.navigate("detailMyFood/${meal.food.idFood}/${mealId}")
+            TimeMealItem(meal.food.name,meal.food.totalCalo.toString(),meal.detailMealData.quantity) {
+                navController.navigate("detailMyFood/${meal.food.idFood}/${mealId}/${meal.detailMealData.idDetailMeal}/${meal.detailMealData.quantity}")
             }
             Spacer(modifier = Modifier.height(10.dp))
         }

@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mealmanagement.food.AddFood
+
 import com.example.mealmanagement.food.DetailFood
 import com.example.mealmanagement.food.DetailMeal
 import com.example.mealmanagement.food.DetailMyFood
@@ -15,6 +16,7 @@ import com.example.mealmanagement.food.FindFood
 import com.example.mealmanagement.food.ListDay
 import com.example.mealmanagement.food.ListMeal
 import com.example.mealmanagement.home.Home
+import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.route.Screen
 import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
@@ -57,10 +59,13 @@ fun Navigation() {
             DetailFood(navController = navController, foodId = foodId.toString(),mealID.toString(), foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
         }
 
-        composable("detailMyFood/{foodId}/{mealID}") { backStackEntry ->
+        composable("detailMyFood/{foodId}/{mealID}/{detailId}/{quantity}") { backStackEntry ->
             val foodId = backStackEntry.arguments?.getString("foodId")
             val mealID = backStackEntry.arguments?.getString("mealID")
-            DetailMyFood(navController = navController, foodId = foodId.toString(),mealID.toString(), foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
+            val detailId = backStackEntry.arguments?.getString("detailId")
+            val quantity = backStackEntry.arguments?.getString("quantity")
+            var item = DetailMealData(detailId.toString(),mealID.toString(),foodId.toString(),quantity.toString().toInt())
+            DetailMyFood(navController = navController, item, foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
         }
     }
 

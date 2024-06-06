@@ -70,17 +70,17 @@ class DetailMealViewModel: ViewModel()  {
         return detailMealList
     }
 
-    fun updateDetailMeal(detailMeal: DetailMealData) = CoroutineScope(Dispatchers.IO).launch {
+    fun updateDetailMeal(detailMeal: DetailMealData, context: Context) = CoroutineScope(Dispatchers.IO).launch {
         databaseReference.child(detailMeal.idDetailMeal).setValue(detailMeal)
             .addOnSuccessListener {
-                // Handle success here
+                Toast.makeText(context, "Update Success", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 // Handle error here
             }
     }
-    fun deleteDetailMealsByMealId(mealId: String, context: Context) = CoroutineScope(Dispatchers.IO).launch {
-        databaseReference.orderByChild("idMeal").equalTo(mealId)
+    fun deleteDetailMealsByID(detailMealId: String, context: Context) = CoroutineScope(Dispatchers.IO).launch {
+        databaseReference.orderByChild("idDetailMeal").equalTo(detailMealId)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (childSnapshot in snapshot.children) {
