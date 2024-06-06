@@ -42,6 +42,8 @@ import com.example.mealmanagement.menu.TextInter
 import com.example.mealmanagement.model.MenuData
 import com.example.mealmanagement.ui.theme.GrayText
 import com.example.mealmanagement.ui.theme.GreenText
+import com.example.mealmanagement.ui.theme.PinkBackGround
+import com.example.mealmanagement.ui.theme.PinkText
 import com.example.mealmanagement.viewmodel.MenuViewModel
 
 import java.time.format.DateTimeFormatter
@@ -51,7 +53,7 @@ import java.util.Locale
 fun ListDay(navController: NavController,menuViewModel: MenuViewModel,menuID:String) {
 val menu by menuViewModel.getMenuById(menuID).observeAsState(initial = null)
 
-    BaseScreen {
+    BaseScreen(navController) {
         Column {
             Row(
                 Modifier
@@ -69,7 +71,7 @@ val menu by menuViewModel.getMenuById(menuID).observeAsState(initial = null)
 
             menu?.let {
                 // Sử dụng menu nếu không null
-                NameItem(it, menuViewModel)
+                NameItem(navController,it, menuViewModel)
             } ?: run {
                 // Hiển thị thông báo nếu menu là null
                 Text(text = "Menu data is loading or not available")
@@ -129,7 +131,7 @@ fun DayItem(day:String,index:String,navController: NavController,menuID:String) 
 }
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun NameItem(menu: MenuData, menuViewModel: MenuViewModel) {
+fun NameItem(navController: NavController,menu: MenuData, menuViewModel: MenuViewModel) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var context = LocalContext.current
     var thucDonName by remember { mutableStateOf(menu.TenThucDon) }
@@ -140,7 +142,7 @@ fun NameItem(menu: MenuData, menuViewModel: MenuViewModel) {
     ){
         OutlinedTextField(
             value = thucDonName,
-            modifier = Modifier.width(150.dp).padding(5.dp),
+            modifier = Modifier.width(200.dp).padding(5.dp),
             maxLines = 1,
             onValueChange = { thucDonName = it }
         )
@@ -157,6 +159,19 @@ fun NameItem(menu: MenuData, menuViewModel: MenuViewModel) {
                 contentDescription = null ,
                 modifier = Modifier.size(40.dp),
                 tint = GreenText)
+        }
+        Button(
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
+            contentPadding = PaddingValues(0.dp),
+            onClick = {
+                menuViewModel.deleteMenu(menu.IDThucDon,context)
+                navController.navigate("listMeal")
+
+            }) {
+            Icon(painter = painterResource(id =  R.drawable.baseline_remove_circle_24),
+                contentDescription = null ,
+                modifier = Modifier.size(40.dp),
+                tint = PinkText)
         }
     }
 }

@@ -79,4 +79,24 @@ class DetailMealViewModel: ViewModel()  {
                 // Handle error here
             }
     }
+    fun deleteDetailMealsByMealId(mealId: String, context: Context) = CoroutineScope(Dispatchers.IO).launch {
+        databaseReference.orderByChild("idMeal").equalTo(mealId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (childSnapshot in snapshot.children) {
+                        childSnapshot.ref.removeValue()
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Successfully deleted detail meal data", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle error here
+                }
+            })
+    }
 }

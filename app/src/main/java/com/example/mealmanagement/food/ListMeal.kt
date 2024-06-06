@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -69,8 +70,8 @@ import java.util.Locale
 @Composable
 fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: String) {
     val thucDonList by menuViewModel.getThucDonByUserId(userId).observeAsState(initial = emptyList())
-
-    BaseScreen {
+    val context = LocalContext.current
+    BaseScreen(navController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,11 +82,35 @@ fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: 
             Spacer(modifier = Modifier.height(10.dp))
             SelectButton()
             Spacer(modifier = Modifier.height(10.dp))
-            thucDonList.forEach { thucDon ->
-                SingleMeal(thucDon,navController)
+            LazyColumn {
+                thucDonList.forEach { thucDon ->
+                    item {
+                        SingleMeal(thucDon,navController)
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
+
+                }
             }
-            Spacer(modifier = Modifier.height(10.dp))
-            ButtonPlus()
+
+            ButtonPlus{
+                // Tìm tên thực đơn có số thứ tự cao nhất
+                val lastThucDonNumber = thucDonList
+                    .mapNotNull { it.TenThucDon.removePrefix("Thực đơn ").toIntOrNull() }
+                    .maxOrNull() ?: 0
+
+                // Tạo tên thực đơn mới
+                val newThucDonNumber = lastThucDonNumber + 1
+                val newThucDonName = "Thực đơn $newThucDonNumber"
+
+                // Tạo mới một MenuData với tên mới
+                val newThucDon = MenuData("", userId, newThucDonName, "2023-01-01")
+
+                // Lưu thực đơn mới vào cơ sở dữ liệu
+                menuViewModel.saveMenu(newThucDon, context)
+            }
+
+
         }
     }
 }
@@ -151,53 +176,54 @@ fun SingleButton(color:Color,backGround :Color, icon: Int) {
         )
     }
 }
-//@Composable
-//fun  SelectMeal(){
-//    SingleMeal()
-//
-//}
+
 
 @Composable
 fun SingleMeal(menu:MenuData,navController: NavController){
-    Button(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(14.dp),
-        colors = ButtonDefaults.buttonColors(GreenBackGround),
-        contentPadding = PaddingValues(10.dp, 16.dp),
-        onClick = { navController.navigate("listDay/${menu.IDThucDon}") }) {
-        Row(
+    Row {
+        Button(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_fastfood_24)
-                , contentDescription = "",
-                tint = GreenText,
-                modifier = Modifier.size(25.dp),
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = menu.TenThucDon,
-                color = GreenText,
-                fontSize = 20.sp,
-                fontFamily = inter_bold,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-
+            shape = RoundedCornerShape(14.dp),
+            colors = ButtonDefaults.buttonColors(GreenBackGround),
+            contentPadding = PaddingValues(10.dp, 16.dp),
+            onClick = { navController.navigate("listDay/${menu.IDThucDon}") }) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_fastfood_24)
+                    , contentDescription = "",
+                    tint = GreenText,
+                    modifier = Modifier.size(25.dp),
                 )
-            Spacer(modifier = Modifier.width(180.dp))
-            Icon(
-                painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24)
-                , contentDescription = "",
-                tint = GreenText,
-                modifier = Modifier.size(23.dp),
-            )
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(
+                    text = menu.TenThucDon,
+                    color = GreenText,
+                    fontSize = 20.sp,
+                    fontFamily = inter_bold,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier.width(270.dp)
+                    )
+
+                Icon(
+                    painter = painterResource(id = R.drawable.baseline_arrow_forward_ios_24)
+                    , contentDescription = "",
+                    tint = GreenText,
+                    modifier = Modifier.size(23.dp),
+                )
+            }
         }
     }
+
 }
 @Composable
-fun ButtonPlus() {
+fun ButtonPlus(
+    onclick: () -> Unit
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
@@ -205,7 +231,8 @@ fun ButtonPlus() {
         Button(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
             contentPadding = PaddingValues(0.dp),
-            onClick = { /*TODO*/ }) {
+            onClick = onclick
+        ) {
             Icon(painter = painterResource(id =  R.drawable.baseline_add_circle_24),
                 contentDescription = null ,
                 modifier = Modifier.size(40.dp),

@@ -78,4 +78,16 @@ class MenuViewModel : ViewModel() {
                 // Handle error here
             }
     }
+    fun deleteMenu(menuId: String, context: Context) = CoroutineScope(Dispatchers.IO).launch {
+
+
+        // Then delete the meal
+        databaseReference.child(menuId).removeValue()
+            .addOnSuccessListener {
+                Toast.makeText(context, "Successfully deleted meal", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+            }
+    }
 }

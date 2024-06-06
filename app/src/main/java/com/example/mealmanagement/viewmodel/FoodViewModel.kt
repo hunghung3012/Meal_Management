@@ -51,6 +51,22 @@ class FoodViewModel : ViewModel() {
 
         return foodData
     }
+    fun getAllFoods(): LiveData<List<FoodData>> {
+        val foodList = MutableLiveData<List<FoodData>>()
+
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = snapshot.children.mapNotNull { it.getValue(FoodData::class.java) }
+                foodList.value = list
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle error here
+            }
+        })
+
+        return foodList
+    }
 
     fun getFoodByElement(element: String): LiveData<List<FoodData>> {
         val foodList = MutableLiveData<List<FoodData>>()

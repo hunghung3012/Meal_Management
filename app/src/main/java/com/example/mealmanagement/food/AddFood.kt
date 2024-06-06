@@ -36,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
 import com.example.mealmanagement.ui.theme.BlackText
@@ -43,10 +44,12 @@ import com.example.mealmanagement.ui.theme.GreenBackGround
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.ui.theme.PinkBackGround
 import com.example.mealmanagement.ui.theme.PinkText
+import com.example.mealmanagement.viewmodel.DetailMealViewModel
+import com.example.mealmanagement.viewmodel.MealViewModel
 
 @Composable
-fun AddFood() {
-    BaseScreen {
+fun AddFood(navController: NavController,mealId:String,mealViewModel: MealViewModel,detailMealViewModel:DetailMealViewModel) {
+    BaseScreen(navController) {
         Column {
 //            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0 )
             LazyColumn (

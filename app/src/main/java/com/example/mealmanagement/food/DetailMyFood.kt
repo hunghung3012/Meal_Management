@@ -1,5 +1,7 @@
 package com.example.mealmanagement.food
 
+
+
 import android.widget.Button
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -50,7 +52,7 @@ import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 
 @Composable
-fun DetailFood(navController: NavController,foodId:String,mealId:String,foodViewModel: FoodViewModel,detailMealViewModel: DetailMealViewModel) {
+fun DetailMyFood(navController: NavController,foodId:String,mealId:String,foodViewModel: FoodViewModel,detailMealViewModel: DetailMealViewModel) {
     val food = foodViewModel.getFoodById(foodId).observeAsState().value ?: FoodData()
     var context = LocalContext.current
     var count by remember { mutableStateOf(1) }
@@ -61,36 +63,36 @@ fun DetailFood(navController: NavController,foodId:String,mealId:String,foodView
                 modifier = Modifier.padding(20.dp)
             ) {
 
-                DetailFoodItem("Tên",food.name)
-                DetailFoodItem("Lượng calo","${food.totalCalo} kcal")
-                DetailFoodItem("Thành phần",
-                      "+ 1 bánh mì không"
+                DetailFoodItem2("Tên",food.name)
+                DetailFoodItem2("Lượng calo","${food.totalCalo} kcal")
+                DetailFoodItem2("Thành phần",
+                    "+ 1 bánh mì không"
                             +"\n+ 1 Miếng thịt bò"
                             +"\n+ 1 Lát Cà Chua"
                 )
-                DetailFoodItem("Cách chế biến",
+                DetailFoodItem2("Cách chế biến",
                     "${food.method}"
                 )
-                DetailFoodItem("Địa chỉ",
+                DetailFoodItem2("Địa chỉ",
                     "${food.address}"
                 )
 
-                ButtonChange(
+                ButtonChange2(
                     navController,
                     count,
                     {count++},
                     {if(count>1)  count--},
-                        {
-                            //add to cart
-                         detailMealViewModel.saveDetailMeal(
-                             DetailMealData(
-                                 idMeal = mealId,
-                                 idFood = foodId,
-                                 quantity = count,
+                    {
+                        //add to cart
+                        detailMealViewModel.saveDetailMeal(
+                            DetailMealData(
+                                idMeal = mealId,
+                                idFood = foodId,
+                                quantity = count,
 
-                                 ),
-                             context
-                         )
+                                ),
+                            context
+                        )
 
 
 
@@ -103,7 +105,7 @@ fun DetailFood(navController: NavController,foodId:String,mealId:String,foodView
 
 }
 @Composable
-fun DetailFoodItem(bold:String,detail:String) {
+fun DetailFoodItem2(bold:String,detail:String) {
     Row {
         Text(text = bold+": ",
             fontWeight = FontWeight.Bold,
@@ -116,7 +118,7 @@ fun DetailFoodItem(bold:String,detail:String) {
     Spacer(modifier = Modifier.height(10.dp))
 }
 @Composable
-fun ButtonChange(
+fun ButtonChange2(
     navController: NavController,
     count:Int,
     plus:()->Unit,
@@ -162,18 +164,32 @@ fun ButtonChange(
             }
         }
 
-        Button(
+        Row {
+            Button(
 
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = GreenBackGround),
-            onClick = {
-                add()
-                navController.navigateUp()
-            }){
-            Text(text = "Thêm",
-                color = BlackText)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PinkText),
+                onClick = {
 
+
+                }){
+                Text(text = "Câp nhật",
+                    color = BlackText)
+
+            }
+            Button(
+
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PinkBackGround),
+                onClick = {
+
+                }){
+                Text(text = "Xóa",
+                    color = BlackText)
+
+            }
         }
+
     }
 
 }

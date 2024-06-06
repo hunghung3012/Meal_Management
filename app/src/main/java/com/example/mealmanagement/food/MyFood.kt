@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
 import com.example.mealmanagement.menu.ButtonBack
@@ -70,8 +71,8 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 @Composable
-fun MyFood() {
-    BaseScreen {
+fun MyFood(navController: NavController) {
+    BaseScreen(navController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -82,7 +83,9 @@ fun MyFood() {
             Spacer(modifier = Modifier.height(10.dp))
             SelectMyMeal()
             Spacer(modifier = Modifier.height(10.dp))
-            ButtonPlus()
+            ButtonPlus{
+
+            }
         }
     }
 }

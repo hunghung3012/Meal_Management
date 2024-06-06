@@ -1,5 +1,6 @@
 package com.example.mealmanagement.food
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -24,12 +25,16 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -50,59 +55,70 @@ import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 import com.example.mealmanagement.viewmodel.MealViewModel
 data class MealItem(val name: String, val calories: String)
+data class FoodDetail(
+    val food: FoodData,
+    val quantity: Int
+)
 @Composable
 fun DetailMeal(navController: NavController,idMenu:String,day:String,mealModel:MealViewModel,detailMealViewModel:DetailMealViewModel,foodViewModel: FoodViewModel) {
+
     val mealList by mealModel.getMealsByMenuId(idMenu).observeAsState(initial = emptyList())
-    val mealListDay = mutableListOf<MealData>()
-    mealList.forEach {
-        if(it.day.toString().equals(day) ) {
-            mealListDay.add(it)
+    val mealListDay = mealList.filter { it.day.toString() == day }
+    val mealTypes = listOf("Breakfast","Lunch","Dinner")
+
+    var conText = LocalContext.current
+    // Kiểm tra và tạo meal nếu cần
+    LaunchedEffect(mealList) {
+        mealTypes.forEach { mealType ->
+            val exists = mealList.any { it.name == mealType && it.day.toString() == day }
+            if (!exists) {
+//                mealModel.saveMeal(
+//                    MealData(
+//                        idMeal = "", // Generate a new ID if necessary
+//                        idMenu = idMenu,
+//                        day = day.toInt(),
+//                        name = mealType
+//                    ),
+//                    conText
+//                )
+                Log.d("DetailMeal", "Created new meal type: $mealType for day: $day")
+            }
         }
     }
-    var mealId = ""
-    mealListDay.forEach( {
-        if(it.name == "Breakfast") {
-            mealId = it.idMeal
-        }
-    }
-    )
-    val detailMealList by detailMealViewModel.getDetailMealsByMealId(mealId).observeAsState(initial = emptyList())
-
-    // For each DetailMealData, get the FoodData by idFood
-    val foodList = mutableListOf<FoodData>()
-    detailMealList.forEach { detailMeal ->
-        val food by foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null)
-        food?.let {
-            foodList.add(it)
-        }
-
-    }
 
 
 
-//Tets
-    Log.d("MealList", "Size: ${detailMealList.size}")
-    foodList.forEach { meal ->
-        Log.d("MealList","day: ${day} ID: ${meal.idFood}, Name: ${meal.name},")
-    }
-    BaseScreen {
+
+    BaseScreen(navController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = idMenu)
-//            Text(text = day)
 
             BannerItem(98,R.drawable.banner_2,"Thực đơn hôm nay",26,navController)
             Spacer(modifier = Modifier.height(10.dp))
             LazyColumn {
-                item {
-//                    ListTest("Buổi Sáng",foodList)
+
+                mealTypes.forEach { mealType ->
+                    item {
+                        MealTypeSection(
+                            mealType = mealType,
+                            day = day,
+                            mealList = mealList,
+                            idMenu = idMenu,
+                           mealModel = mealModel,
+                            detailMealViewModel = detailMealViewModel,
+                            foodViewModel = foodViewModel,
+                            navController = navController,
+                            conText = conText
+                        )
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
                 }
                 item {
-                   Spacer(modifier = Modifier.height(100.dp) )
+                    Spacer(modifier = Modifier.height(100.dp) )
                 }
             }
 
@@ -110,15 +126,67 @@ fun DetailMeal(navController: NavController,idMenu:String,day:String,mealModel:M
     }
 }
 @Composable
-fun ListTest(time: String, mealList: List<FoodData>) {
+fun MealTypeSection(
+
+    mealType: String,
+    day: String,
+    mealList: List<MealData>,
+    idMenu: String,
+    mealModel: MealViewModel,
+    detailMealViewModel: DetailMealViewModel,
+    foodViewModel: FoodViewModel,
+    navController: NavController,
+    conText: Context
+) {
+
+
+
+    TimeMeal(time =mealType)
+    var mealId = ""
+    mealList.forEach( {
+        if(it.name == mealType && it.day.toString() == day) {
+            mealId = it.idMeal
+            val detailMealList by detailMealViewModel.getDetailMealsByMealId(mealId).observeAsState(initial = emptyList())
+            var foodList = mutableListOf<FoodDetail>()
+            detailMealList.forEach { detailMeal ->
+                val food by foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null)
+                food?.let {
+                    foodList.add(FoodDetail(it,detailMeal.quantity))
+                }
+            }
+            ListTest(navController,foodList,mealId,detailMealViewModel)
+        }
+
+
+    })
+    if(mealId == "") {
+
+
+
+
+
+    }else {
+        ButtonPlus{
+            navController.navigate("findFood/${mealId}")
+        }
+
+    }
+
+
+
+}
+
+@Composable
+fun ListTest( navController: NavController,mealList: List<FoodDetail>,mealId:String,detailMealViewModel: DetailMealViewModel) {
     Column {
-        TimeMeal(time)
-        Spacer(modifier = Modifier.height(10.dp))
+
         mealList.forEach { meal ->
-            TimeMealItem(meal.name, meal.totalCalo.toString())
+
+            TimeMealItem(meal.food.name,meal.food.totalCalo.toString(),meal.quantity) {
+                navController.navigate("detailMyFood/${meal.food.idFood}/${mealId}")
+            }
             Spacer(modifier = Modifier.height(10.dp))
         }
-        ButtonPlus()
     }
 }
 @Composable
@@ -153,7 +221,7 @@ fun TimeMeal(time:String) {
 
 }
 @Composable
-fun TimeMealItem(nameOfFood:String,calo:String) {
+fun TimeMealItem(nameOfFood:String,calo:String,quantity: Int,onClick:()->Unit ){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +231,7 @@ fun TimeMealItem(nameOfFood:String,calo:String) {
             colors = ButtonDefaults.buttonColors(GreenBackGround2),
             shape = RoundedCornerShape(14.dp),
             contentPadding = PaddingValues(10.dp, 16.dp),
-            onClick = { /*TODO*/ }) {
+            onClick = { onClick() }){
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -190,7 +258,7 @@ fun TimeMealItem(nameOfFood:String,calo:String) {
                         modifier = Modifier.width(250.dp)
                     )
                     Text(
-                        text = "1 cái",
+                        text = quantity.toString()+" cái",
                         color = BlackText,
                         fontSize = 16.sp,
 //                        fontFamily = ,

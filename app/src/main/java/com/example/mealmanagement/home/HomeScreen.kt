@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.menu.Menu
 import java.nio.file.WatchEvent
@@ -39,7 +40,7 @@ import java.nio.file.WatchEvent
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun BaseScreen(component: @Composable () -> Unit) {
+fun BaseScreen(navController: NavController,component: @Composable () -> Unit) {
     Scaffold(
         bottomBar = {
             BottomAppBar(
@@ -51,7 +52,7 @@ fun BaseScreen(component: @Composable () -> Unit) {
 
 
             ) {
-              Menu(Modifier)
+              Menu(Modifier,navController)
             }
         }
     ) {

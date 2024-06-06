@@ -1,5 +1,6 @@
 package com.example.mealmanagement.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import android.content.Context
 import android.widget.Toast
@@ -15,6 +16,8 @@ import kotlinx.coroutines.launch
 class MealViewModel: ViewModel() {
     private val databaseReference: DatabaseReference = FirebaseDatabase.getInstance().reference.child("meal")
 
+
+    @SuppressLint("SuspiciousIndentation")
     fun saveMeal(meal: MealData, context: Context) = CoroutineScope(Dispatchers.IO).launch {
         val mealId = databaseReference.push().key // Tạo ID tự động
             if (mealId != null) {
@@ -99,4 +102,5 @@ class MealViewModel: ViewModel() {
                 // Handle error here
             }
     }
+
 }

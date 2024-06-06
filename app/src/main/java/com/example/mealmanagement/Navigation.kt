@@ -7,7 +7,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.mealmanagement.food.AddFood
+import com.example.mealmanagement.food.DetailFood
 import com.example.mealmanagement.food.DetailMeal
+import com.example.mealmanagement.food.DetailMyFood
+import com.example.mealmanagement.food.FindFood
 import com.example.mealmanagement.food.ListDay
 import com.example.mealmanagement.food.ListMeal
 import com.example.mealmanagement.home.Home
@@ -26,8 +30,8 @@ fun Navigation() {
     val mealViewModel: MealViewModel = viewModel()
     val detailMealViewModel: DetailMealViewModel = viewModel()
     NavHost(navController = navController, startDestination = "listMeal") {
-        composable(Screen.Home.route) {
-            Home()
+        composable("home") {
+            Home(navController)
         }
         composable("listMeal") { ListMeal(navController, menuViewModel, "User1") }
         composable("listDay/{menuId}") { backStackEntry ->
@@ -41,5 +45,23 @@ fun Navigation() {
             DetailMeal(navController, menuId.toString(),day.toString(), mealViewModel,detailMealViewModel,foodViewModel)
 //        DetailMeal(navController: NavController,idMenu:String,day:String,mealModel:MealViewModel,detailMealViewModel: DetailMealViewModel,foodViewModel: FoodViewModel) {
         }
+
+        composable("findFood/{mealId}") { backStackEntry ->
+            val mealId = backStackEntry.arguments?.getString("mealId")
+            FindFood(navController,mealId.toString(),mealViewModel,detailMealViewModel,foodViewModel)
+        }
+        //composable for detailFood
+        composable("detailFood/{foodId}/{mealID}") { backStackEntry ->
+            val foodId = backStackEntry.arguments?.getString("foodId")
+            val mealID = backStackEntry.arguments?.getString("mealID")
+            DetailFood(navController = navController, foodId = foodId.toString(),mealID.toString(), foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
+        }
+
+        composable("detailMyFood/{foodId}/{mealID}") { backStackEntry ->
+            val foodId = backStackEntry.arguments?.getString("foodId")
+            val mealID = backStackEntry.arguments?.getString("mealID")
+            DetailMyFood(navController = navController, foodId = foodId.toString(),mealID.toString(), foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
+        }
     }
+
 }
