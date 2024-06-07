@@ -6,15 +6,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import coil.compose.rememberAsyncImagePainter
+import coil.compose.rememberImagePainter
+import coil.request.ImageRequest
 import com.example.mealmanagement.food.AddFood
 import com.example.mealmanagement.food.DetailFood
 import com.example.mealmanagement.food.DetailMeal
@@ -32,6 +37,7 @@ import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.model.FoodData
 import com.example.mealmanagement.model.MealData
 import com.example.mealmanagement.model.MenuData
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.test.AddDataScreen
 import com.example.mealmanagement.test.GetDataScreen
 import com.example.mealmanagement.test.SharedViewModel
@@ -59,7 +65,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    session.data = "User1"
                     Navigation()
+
 //                    addTestDetailMeals()
                 }
 
@@ -77,19 +85,19 @@ class MainActivity : ComponentActivity() {
         menuViewModel.saveMenu(thucDon2, this)
         menuViewModel.saveMenu(thucDon3, this)
     }
-    fun addTestFood() {
-        val food1 = FoodData("", "Bánh mì", "Bánh mì, thịt, rau sống", 250.0, "Nướng", "123 Đường ABC")
-        val food2 = FoodData("", "Phở", "Phở bò", 350.0, "Luộc", "456 Đường XYZ")
-        val food3 = FoodData("", "Gỏi cuốn", "Tôm, thịt, rau sống", 150.0, "Cuốn", "789 Đường LMN")
-        val food4 = FoodData("", "Cơm rang", "Cơm, thịt, rau cải", 400.0, "Xào", "101 Đường PQR")
-        val food5 = FoodData("", "Bún chả", "Bún, thịt heo nướng", 300.0, "Nướng", "202 Đường STU")
-
-        foodViewModel.saveFood(food1, this)
-        foodViewModel.saveFood(food2, this)
-        foodViewModel.saveFood(food3, this)
-        foodViewModel.saveFood(food4, this)
-        foodViewModel.saveFood(food5, this)
-    }
+//    fun addTestFood() {
+//        val food1 = FoodData("", "Bánh mì", "Bánh mì, thịt, rau sống", 250.0, "Nướng", "123 Đường ABC")
+//        val food2 = FoodData("", "Phở", "Phở bò", 350.0, "Luộc", "456 Đường XYZ")
+//        val food3 = FoodData("", "Gỏi cuốn", "Tôm, thịt, rau sống", 150.0, "Cuốn", "789 Đường LMN")
+//        val food4 = FoodData("", "Cơm rang", "Cơm, thịt, rau cải", 400.0, "Xào", "101 Đường PQR")
+//        val food5 = FoodData("", "Bún chả", "Bún, thịt heo nướng", 300.0, "Nướng", "202 Đường STU")
+//
+//        foodViewModel.saveFood(food1, this)
+//        foodViewModel.saveFood(food2, this)
+//        foodViewModel.saveFood(food3, this)
+//        foodViewModel.saveFood(food4, this)
+//        foodViewModel.saveFood(food5, this)
+//    }
     fun addTestMeals() {
 
         val meal1 = MealData("", "-NzXC5foKQ0HiwI2Rhcz", "Breakfast", 0)
@@ -135,4 +143,17 @@ fun GreetingPreview() {
     MealManagementTheme {
         Greeting("Android")
     }
+}
+@Composable
+fun ImageFromUrl(imageUrl: String,modifier: Modifier) {
+    val painter = rememberAsyncImagePainter(
+        ImageRequest.Builder(LocalContext.current).data(data = imageUrl).apply(block = fun ImageRequest.Builder.() {
+            crossfade(true)
+        }).build()
+    )
+    androidx.compose.foundation.Image(
+        painter = painter,
+        contentDescription = null,
+        modifier = modifier.fillMaxSize()
+    )
 }

@@ -23,16 +23,22 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 
 import androidx.compose.ui.Alignment
@@ -71,6 +77,13 @@ import java.util.Locale
 fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: String) {
     val thucDonList by menuViewModel.getThucDonByUserId(userId).observeAsState(initial = emptyList())
     val context = LocalContext.current
+
+    var isLoading by remember { mutableStateOf(true) }
+
+    LaunchedEffect(thucDonList) {
+        isLoading = thucDonList.isEmpty()
+    }
+
     BaseScreen(navController) {
         Column(
             modifier = Modifier
@@ -82,14 +95,14 @@ fun ListMeal(navController: NavController,menuViewModel: MenuViewModel, userId: 
             Spacer(modifier = Modifier.height(10.dp))
             SelectButton()
             Spacer(modifier = Modifier.height(10.dp))
-            LazyColumn {
-                thucDonList.forEach { thucDon ->
-                    item {
-                        SingleMeal(thucDon,navController)
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                LazyColumn {
+                    items(thucDonList) { thucDon ->
+                        SingleMeal(thucDon, navController)
                         Spacer(modifier = Modifier.height(10.dp))
                     }
-
-
                 }
             }
 
@@ -156,20 +169,25 @@ fun SelectButton() {
         horizontalArrangement = Arrangement.Center
         
     ) {
-        SingleButton(GreenText, GreenBackGround,R.drawable.baseline_emoji_people_24)
+        SingleButton(GreenText, GreenBackGround,R.drawable.baseline_emoji_people_24) {
+
+        }
         Spacer(modifier = Modifier.width(10.dp))
-        SingleButton(PinkText, PinkBackGround,R.drawable.baseline_thumb_up_24)
+        SingleButton(PinkText, PinkBackGround,R.drawable.baseline_thumb_up_24) {
+
+        }
     }
    
 }
 @Composable
-fun SingleButton(color:Color,backGround :Color, icon: Int) {
+fun SingleButton(color:Color,backGround :Color, icon: Int,onclick: () -> Unit) {
     Button(
         shape = RoundedCornerShape(80.dp),
         modifier = Modifier.size(50.dp),
         colors = ButtonDefaults.buttonColors(backGround),
         contentPadding = PaddingValues(0.dp),
-        onClick = { /*TODO*/ }) {
+        onClick = onclick)
+    {
         Icon(painter = painterResource(id =icon)
             , contentDescription = "",
             tint = color

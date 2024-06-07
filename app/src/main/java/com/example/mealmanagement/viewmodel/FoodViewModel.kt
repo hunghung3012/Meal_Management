@@ -68,10 +68,10 @@ class FoodViewModel : ViewModel() {
         return foodList
     }
 
-    fun getFoodByElement(element: String): LiveData<List<FoodData>> {
+    fun getFoodByIdUser(idUser: String): LiveData<List<FoodData>> {
         val foodList = MutableLiveData<List<FoodData>>()
 
-        databaseReference.orderByChild("element").equalTo(element)
+        databaseReference.orderByChild("idUser").equalTo(idUser)
             .addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val list = snapshot.children.mapNotNull { it.getValue(FoodData::class.java) }

@@ -54,9 +54,9 @@ Column(
     ) {
         MenuItem( R.drawable.baseline_home_24,Color(112, 116, 113),navController,"home")
         MenuItem( R.drawable.baseline_fastfood_24,Color(112, 116, 113),navController,"listMeal")
-        MenuItem( R.drawable.baseline_add_circle_24,Color(62, 168, 89),navController,"addScreen")
+        MenuItem( R.drawable.baseline_add_circle_24,Color(62, 168, 89),navController,"addFood")
         MenuItem( R.drawable.baseline_message_24,Color(112, 116, 113),navController,"Blog")
-        MenuItem( R.drawable.baseline_settings_24,Color(112, 116, 113),navController,"Setting")
+        MenuItem( R.drawable.baseline_settings_24,Color(112, 116, 113),navController,"myListFood")
     }
 }
 

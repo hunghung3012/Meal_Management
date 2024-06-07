@@ -54,7 +54,9 @@ fun FindFood(navController: NavController, mealId: String, mealViewModel: MealVi
         ) {
             Text(text = mealId)
             BannerItem(height = 98, img = R.drawable.banner_2, text = "Lựa chọn món ăn", fontSize = 22, navController)
-            SingleButton(GreenText, GreenBackGround, R.drawable.baseline_emoji_people_24)
+            SingleButton(GreenText, GreenBackGround, R.drawable.baseline_emoji_people_24){
+
+            }
             SerchBar(onSearchQueryChange = { searchQuery = it })
 
             LazyColumn(

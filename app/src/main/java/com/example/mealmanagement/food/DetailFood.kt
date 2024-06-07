@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
+import com.example.mealmanagement.ImageFromUrl
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
 import com.example.mealmanagement.model.DetailMealData
@@ -56,7 +57,8 @@ fun DetailFood(navController: NavController,foodId:String,mealId:String,foodView
     var count by remember { mutableStateOf(1) }
     BaseScreen(navController) {
         Column {
-            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0,navController )
+//            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0,navController )
+            ImageFromUrl(imageUrl = food.img, modifier = Modifier.fillMaxWidth().height(300.dp))
             Column(
                 modifier = Modifier.padding(20.dp)
             ) {

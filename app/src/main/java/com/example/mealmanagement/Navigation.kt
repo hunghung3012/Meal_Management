@@ -15,6 +15,7 @@ import com.example.mealmanagement.food.DetailMyFood
 import com.example.mealmanagement.food.FindFood
 import com.example.mealmanagement.food.ListDay
 import com.example.mealmanagement.food.ListMeal
+import com.example.mealmanagement.food.MyFood
 import com.example.mealmanagement.home.Home
 import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.route.Screen
@@ -66,6 +67,17 @@ fun Navigation() {
             val quantity = backStackEntry.arguments?.getString("quantity")
             var item = DetailMealData(detailId.toString(),mealID.toString(),foodId.toString(),quantity.toString().toInt())
             DetailMyFood(navController = navController, item, foodViewModel = foodViewModel,detailMealViewModel = detailMealViewModel)
+        }
+
+        composable("addFood") { backStackEntry ->
+
+
+            AddFood(navController = navController,foodViewModel)
+        }
+        composable("myListFood") { backStackEntry ->
+
+
+            MyFood(navController = navController,foodViewModel)
         }
     }
 

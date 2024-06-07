@@ -3,6 +3,7 @@ package com.example.mealmanagement.food
 
 import android.graphics.drawable.shapes.RoundRectShape
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,6 +33,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +57,7 @@ import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
 import com.example.mealmanagement.menu.ButtonBack
 import com.example.mealmanagement.menu.Menu
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.ui.theme.GreenBackGround
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.ui.theme.OrangeBackGround
@@ -66,12 +70,15 @@ import com.example.mealmanagement.ui.theme.inter_light
 import com.example.mealmanagement.ui.theme.inter_medium
 import com.example.mealmanagement.ui.theme.kanit_bold
 import com.example.mealmanagement.ui.theme.kanit_ragular
+import com.example.mealmanagement.viewmodel.FoodViewModel
 import java.nio.file.WatchEvent
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 @Composable
-fun MyFood(navController: NavController) {
+fun MyFood(navController: NavController,foodViewModel: FoodViewModel) {
+    Log.e("ahihi",session.data)
+    val foodList by foodViewModel.getFoodByIdUser(session.data).observeAsState(initial = emptyList())
     BaseScreen(navController) {
         Column(
             modifier = Modifier
@@ -79,12 +86,23 @@ fun MyFood(navController: NavController) {
                 .padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-//            BannerItem(100,R.drawable.banner_2,"Món Ăn Của Bạn",23)
+            BannerItem(100,R.drawable.banner_2,"Món Ăn Của Bạn",23,navController)
             Spacer(modifier = Modifier.height(10.dp))
-            SelectMyMeal()
+            LazyColumn {
+                foodList.forEach{food->
+                    item {
+                        SingleMyMeal(food.name) {
+
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+                }
+            }
+
+
             Spacer(modifier = Modifier.height(10.dp))
             ButtonPlus{
-
+                navController.navigate("addFood")
             }
         }
     }
@@ -92,24 +110,15 @@ fun MyFood(navController: NavController) {
 
 
 
-@Composable
-fun  SelectMyMeal(){
-    SingleMyMeal()
-    Spacer(modifier = Modifier.height(10.dp))
-    SingleMyMeal()
-    Spacer(modifier = Modifier.height(10.dp))
-    SingleMyMeal()
 
-
-}
 @Composable
-fun SingleMyMeal() {
+fun SingleMyMeal(name:String, onclick :()->Unit) {
     Button(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.buttonColors(OrangeBackGround),
         contentPadding = PaddingValues(10.dp, 16.dp),
-        onClick = { /*TODO*/ }) {
+        onClick = onclick) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -123,7 +132,7 @@ fun SingleMyMeal() {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = "Thực đơn 1",
+                text = name,
                 color = OrangeText,
                 fontSize = 20.sp,
                 fontFamily = inter_bold,
