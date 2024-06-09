@@ -25,7 +25,7 @@ class MealViewModel: ViewModel() {
         }
         databaseReference.child(meal.idMeal).setValue(meal)
             .addOnSuccessListener {
-                Toast.makeText(context, "Successfully saved data", Toast.LENGTH_SHORT).show()
+
             }
             .addOnFailureListener { e ->
                 Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()

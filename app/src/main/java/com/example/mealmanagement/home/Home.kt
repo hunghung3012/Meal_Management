@@ -16,14 +16,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,7 +40,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mealmanagement.R
+import com.example.mealmanagement.model.FoodData
+import com.example.mealmanagement.model.UserData
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.ui.theme.inter_medium
+import com.example.mealmanagement.viewmodel.FoodViewModel
+import com.example.mealmanagement.viewmodel.MealViewModel
+import com.example.mealmanagement.viewmodel.UserViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -49,7 +59,10 @@ fun getDay():String {
 }
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun Home(navController: NavController) {
+fun Home(navController: NavController,userViewModel: UserViewModel,foodViewModel: FoodViewModel,mealViewModel: MealViewModel){
+    val user = userViewModel.getUserByUsername(session.data).observeAsState().value ?: UserData()
+    val foodList by foodViewModel.getFoodByIdUser(session.data).observeAsState(emptyList())
+    val mealList by foodViewModel.getFoodByIdUser(session.data).observeAsState(emptyList())
 
     BaseScreen(navController) {
         Column {
@@ -57,7 +70,7 @@ fun Home(navController: NavController) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(400.dp)
+                .height(350.dp)
                 .background(Color(195, 225, 213))
                 .padding(20.dp, 20.dp),
 
@@ -98,22 +111,44 @@ fun Home(navController: NavController) {
 
             }
             Spacer(modifier = Modifier.height(50.dp))
-            InforCalo()
+            InforCalo(foodList.size, mealList.size, calculateCalo(user.weight,user.height).toString())
 
         }
-            InforHealthy()
+            LazyColumn {
+                item{
+                    InforHealthy(user)
+                }
+                item {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(54, 155, 113))
+                            ,onClick = {
+                            navController.navigate("updateInfo")
+                        }) {
+                            Text(text = "Cập nhật")
+                        }
+                    }
+                }
+
+            }
+
+
         }
 
     }
 }
 @Composable
-fun InforCalo() {
+fun InforCalo(food:Int, meal:Int,calo:String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        InforCalo_Item("2")
+        InforCalo_Item(food.toString())
         Column(
             modifier = Modifier
                 .size(200.dp)
@@ -124,16 +159,17 @@ fun InforCalo() {
 
         ) {
             Text(
-                text = " 1256\n/2012",
+                text = "Calo cần thiết \n$calo",
+                textAlign = TextAlign.Center,
                 lineHeight = 40.sp,
-                fontSize = 32.sp,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color(255, 226, 249),
                 fontFamily = inter_medium
             )
 
         }
-        InforCalo_Item("2")
+        InforCalo_Item(meal.toString())
     }
 }
 @Composable
@@ -156,7 +192,7 @@ fun InforCalo_Item(string:String) {
     }
 }
 @Composable
-fun InforHealthy() {
+fun InforHealthy(user:UserData) {
     Row(
         modifier = Modifier.padding(30.dp,20.dp)
     ) {
@@ -164,8 +200,8 @@ fun InforHealthy() {
             modifier = Modifier
                 .clip(RoundedCornerShape(20.dp))
                 .background(Color(251, 236, 208))
-                .height(200.dp)
-                .weight(1.5f)
+                .height(250.dp)
+                .weight(1.7f)
                 .padding(10.dp),
 
         ) {
@@ -177,7 +213,7 @@ fun InforHealthy() {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
                 )
-            InforHealthyItem()
+            InforHealthyItem(user)
         }
         Box(
             modifier = Modifier
@@ -196,17 +232,18 @@ fun InforHealthy() {
 
 }
 @Composable
-fun InforHealthyItem() {
+fun InforHealthyItem(user:UserData){
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
-        InforHealthyItemButton("Cân Nặng", 60,"kg")
-        InforHealthyItemButton("Chiều Cao", 172,"cm")
-        InforHealthyItemNoButton("25.7")
+        InforHealthyItemButton("Cân Nặng", user.weight.toString(),"kg")
+        InforHealthyItemButton("Chiều Cao", user.height.toString(),"cm")
+        InforHealthyItemNoButton("BMI",calculateBMI(user.weight,user.height).toString())
+        InforHealthyItemNoButton("Thể Trạng",checkHealthy(calculateBMI(user.weight,user.height)))
     }
 }
 @Composable
-fun InforHealthyItemButton(name:String , value:Int, donvi:String) {
+fun InforHealthyItemButton(name:String , value:String, donvi:String) {
 
         Row(
 
@@ -215,29 +252,19 @@ fun InforHealthyItemButton(name:String , value:Int, donvi:String) {
             modifier = Modifier.height(50.dp)
         ) {
             Text(text = "$name:$value$donvi",fontSize = 18.sp)
-            Button(
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                contentPadding = PaddingValues(0.dp),
-                onClick = { /*TODO*/ }) {
-                Icon(
-                    modifier = Modifier.size(30.dp),
-                    tint = Color(226, 128, 74),
-                    painter = painterResource(id = R.drawable.baseline_add_circle_24),
-                    contentDescription ="" )
-            }
         }
 
 
 }
 @Composable
-fun InforHealthyItemNoButton(bmi:String) {
+fun InforHealthyItemNoButton(health:String,bmi:String) {
 
     Row(
         modifier = Modifier.height(40.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text ="Chỉ số BMI: ",
+        Text(text ="$health: ",
             fontSize = 18.sp)
         Text(text = "$bmi",
             fontWeight = FontWeight.Bold,
@@ -246,4 +273,29 @@ fun InforHealthyItemNoButton(bmi:String) {
     }
 
 
+}
+fun calculateBMI(weight: Double, height: Double): Double {
+    if (height == 0.0 || weight == 0.0)
+        return 0.0
+    else {
+        // làm tròn bmi đến 2 chữ số thập phân
+        val bmi = weight / (height * 0.01 * height * 0.01)
+        return bmi.roundTo(2)
+    }
+}
+
+fun checkHealthy(bmi: Double): String {
+    return when {
+        bmi < 18.5 -> "Thiếu cân"
+        bmi in 18.5..24.9 -> "Bình thường"
+        bmi in 25.0..29.9 -> "Thừa cân"
+        else -> "Béo phì"
+    }
+}
+
+fun Double.roundTo(n: Int): Double {
+    return "%.${n}f".format(this).toDouble()
+}
+fun calculateCalo(weight: Double, height: Double):Double {
+    return 6.25* height + 10 * weight - 5 * 20 + 5
 }

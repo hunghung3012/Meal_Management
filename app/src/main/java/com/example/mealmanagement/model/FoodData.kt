@@ -8,5 +8,6 @@ data class FoodData(
     var totalCalo:Double =0.0,
     var method:String = "",
     var address:String = "",
-    var idUser:String = ""
+    var idUser:String = "",
+    var allow:Boolean = false
 )

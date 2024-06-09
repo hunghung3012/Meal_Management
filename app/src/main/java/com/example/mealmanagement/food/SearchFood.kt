@@ -52,7 +52,7 @@ fun FindFood(navController: NavController, mealId: String, mealViewModel: MealVi
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            Text(text = mealId)
+
             BannerItem(height = 98, img = R.drawable.banner_2, text = "Lựa chọn món ăn", fontSize = 22, navController)
             SingleButton(GreenText, GreenBackGround, R.drawable.baseline_emoji_people_24){
 
@@ -63,12 +63,15 @@ fun FindFood(navController: NavController, mealId: String, mealViewModel: MealVi
                 verticalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 filteredFoodList.forEach { food ->
-                    item {
-                        TimeMealItem(food.name, food.totalCalo.toString(),1) {
-                            navController.navigate("detailFood/${food.idFood}/${mealId}")
-//                            DetailFood(navController = navController,food)
+                    // kiểm tra thực phẩm đã duyệt chưa
+                    if(food.allow == true) {
+                        item {
+                            TimeMealItem(food.name, food.totalCalo.toString(),1) {
+                                navController.navigate("detailFood/${food.idFood}/${mealId}")
+                            }
                         }
                     }
+
                 }
 
                 item {

@@ -37,11 +37,16 @@ import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.model.FoodData
 import com.example.mealmanagement.model.UserData
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.viewmodel.UserViewModel
 
 @Composable
 fun SignIn(navController: NavController, userviewModel: UserViewModel,user:String = "" ,password:String="") {
+    // kiểm tra đã đăng nhập chuưa
+//    if(session.data != "None") {
+//        navController.navigate("editInfo/${session.data} ")
+//    }
     var username by remember { mutableStateOf(user) }
     var pass by remember { mutableStateOf(password) }
     var context = LocalContext.current
@@ -107,10 +112,16 @@ fun SignIn(navController: NavController, userviewModel: UserViewModel,user:Strin
 
                 // check sign in
 
-
-                if(userData?.pass == pass) {
-                    navController.navigate("editInfo/${userData?.user}")
+                if(username != "" || pass != "") {
+                    if(userData?.pass == pass ) {
+                        session.data = userData?.user.toString()
+                        navController.navigate("editInfo/${userData?.user}")
+                    }
+                    else {
+                        showAlertDialog(context ,"Error","Tài khoản hoặc mật khẩu sai")
+                    }
                 }
+
                 else {
                     showAlertDialog(context ,"Error","Tài khoản hoặc mật khẩu sai")
                 }

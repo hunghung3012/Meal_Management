@@ -1,5 +1,6 @@
 package com.example.mealmanagement
 
+import MessageData
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -33,6 +34,7 @@ import com.example.mealmanagement.home.ImagePickerApp
 
 
 import com.example.mealmanagement.menu.Menu
+
 import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.model.FoodData
 import com.example.mealmanagement.model.MealData
@@ -41,6 +43,7 @@ import com.example.mealmanagement.session.session
 
 import com.example.mealmanagement.sign.SignIn
 import com.example.mealmanagement.sign.SignUp
+import com.example.mealmanagement.sign.UpdateInfo
 
 
 import com.example.mealmanagement.ui.theme.MealManagementTheme
@@ -48,6 +51,9 @@ import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 import com.example.mealmanagement.viewmodel.MealViewModel
 import com.example.mealmanagement.viewmodel.MenuViewModel
+import com.example.mealmanagement.viewmodel.MessageViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class MainActivity : ComponentActivity() {
@@ -56,6 +62,7 @@ class MainActivity : ComponentActivity() {
     private val foodViewModel: FoodViewModel by viewModels()
     private val detailMealViewModel: DetailMealViewModel by viewModels()
     private val mealViewModel: MealViewModel by viewModels()
+    private val messageViewModel: MessageViewModel by viewModels()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,11 +74,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-//                    session.data = "User1"
                     Navigation()
-//                    SignUp()
-
-//                    addTestDetailMeals()
+//                    addTestMessages()
                 }
 
             }
@@ -87,6 +91,20 @@ class MainActivity : ComponentActivity() {
         menuViewModel.saveMenu(thucDon1, this)
         menuViewModel.saveMenu(thucDon2, this)
         menuViewModel.saveMenu(thucDon3, this)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun addTestMessages() {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val message1 = MessageData("", "test1@gmail.com", "123", "Hello User2!", LocalDateTime.parse("2023-01-01 10:00:00", formatter).format(DateTimeFormatter.ISO_DATE_TIME), isSender = true)
+        val message2 = MessageData("", "123", "test1@gmail.com", "Hi User1!", LocalDateTime.parse("2023-01-01 10:05:00", formatter).format(DateTimeFormatter.ISO_DATE_TIME), isSender = false)
+        val message3 = MessageData("", "test1@gmail.com", "123", "How are you?", LocalDateTime.parse("2023-01-01 10:10:00", formatter).format(DateTimeFormatter.ISO_DATE_TIME), isSender = true)
+        val message4 = MessageData("", "123", "test1@gmail.com", "I'm good, thanks!", LocalDateTime.parse("2023-01-01 10:15:00", formatter).format(DateTimeFormatter.ISO_DATE_TIME), isSender = false)
+
+        messageViewModel.saveMessage(message1, this)
+        messageViewModel.saveMessage(message2, this)
+        messageViewModel.saveMessage(message3, this)
+        messageViewModel.saveMessage(message4, this)
     }
 //    fun addTestFood() {
 //        val food1 = FoodData("", "Bánh mì", "Bánh mì, thịt, rau sống", 250.0, "Nướng", "123 Đường ABC")

@@ -210,14 +210,22 @@ var totalCalo by remember {
             mealId = it.idMeal
             val detailMealList by detailMealViewModel.getDetailMealsByMealId(mealId).observeAsState(initial = emptyList())
             var foodList = mutableListOf<FoodDetail>()
+            //Phan them
+            totalCalo = 0.0
+            //
             detailMealList.forEach { detailMeal ->
+                //Phan them
+                val foodCalo = foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null).value?.totalCalo
+                if (foodCalo != null) {
+                    totalCalo += detailMeal.quantity * foodCalo
+                }
+                //
                 val food by foodViewModel.getFoodById(detailMeal.idFood).observeAsState(initial = null)
                 food?.let {
                     foodList.add(FoodDetail(it, DetailMealData(detailMeal.idDetailMeal, detailMeal.idFood, detailMeal.idMeal, detailMeal.quantity)))
                 }
             }
-            ListTest(navController,foodList,mealId,detailMealViewModel)
-            // tính calo
+            ListFoodInMeal(navController,foodList,mealId,detailMealViewModel)
 
         }
 
@@ -225,10 +233,6 @@ var totalCalo by remember {
 
     })
     if(mealId == "") {
-
-
-
-
 
     }else {
         ButtonPlus{
@@ -300,7 +304,7 @@ fun AddMealScreen(conText:Context,mealTypes: List<String> ,onDismiss: () -> Unit
     }
 }
 @Composable
-fun ListTest( navController: NavController,mealList: List<FoodDetail>,mealId:String,detailMealViewModel: DetailMealViewModel) {
+fun ListFoodInMeal( navController: NavController,mealList: List<FoodDetail>,mealId:String,detailMealViewModel: DetailMealViewModel) {
     Column {
 
         mealList.forEach { meal ->
@@ -410,6 +414,7 @@ fun TextCalo(text:String) {
         fontWeight = FontWeight.Bold,
         fontFamily = inter_bold,
         color = BlackText,
+
     )
 }
 

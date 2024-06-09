@@ -18,15 +18,19 @@ import com.example.mealmanagement.food.ListDay
 import com.example.mealmanagement.food.ListMeal
 import com.example.mealmanagement.food.MyFood
 import com.example.mealmanagement.home.Home
+import com.example.mealmanagement.message.MessagingScreen
 import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.route.Screen
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.sign.EditInforUser
 import com.example.mealmanagement.sign.SignIn
 import com.example.mealmanagement.sign.SignUp
+import com.example.mealmanagement.sign.UpdateInfo
 import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 import com.example.mealmanagement.viewmodel.MealViewModel
 import com.example.mealmanagement.viewmodel.MenuViewModel
+import com.example.mealmanagement.viewmodel.MessageViewModel
 import com.example.mealmanagement.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -38,11 +42,18 @@ fun Navigation() {
     val mealViewModel: MealViewModel = viewModel()
     val detailMealViewModel: DetailMealViewModel = viewModel()
     val userViewModel: UserViewModel = viewModel()
-    NavHost(navController = navController, startDestination = "signIn") {
+    val messageViewModel: MessageViewModel = viewModel()
+    NavHost(navController = navController,
+        startDestination = "signIn"
+//        startDestination = "message"
+    ) {
         composable("home") {
-            Home(navController)
+            Home(navController,userViewModel,foodViewModel,mealViewModel)
         }
-        composable("listMeal") { ListMeal(navController, menuViewModel, "User1") }
+        composable("updateInfo") {
+            UpdateInfo(navController,userViewModel)
+        }
+        composable("listMeal") { ListMeal(navController, menuViewModel, session.data) }
         composable("listDay/{menuId}") { backStackEntry ->
             val menuId = backStackEntry.arguments?.getString("menuId")
             ListDay(navController, menuViewModel,menuId.toString())
@@ -105,7 +116,9 @@ fun Navigation() {
             val userID = backStackEntry.arguments?.getString("userID")
             EditInforUser(navController,userViewModel,userID.toString())
         }
-
+        composable("message") {
+            MessagingScreen(navController,messageViewModel)
+        }
 
 
     }

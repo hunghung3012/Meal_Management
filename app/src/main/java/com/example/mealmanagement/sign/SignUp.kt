@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.model.UserData
+import com.example.mealmanagement.session.session
 import com.example.mealmanagement.ui.theme.GreenText
 import com.example.mealmanagement.viewmodel.UserViewModel
 
@@ -47,6 +49,7 @@ fun SignUp(navController: NavController, userViewModel: UserViewModel) {
     var pass_confirm by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var context = LocalContext.current
+    val userList by userViewModel.getAllUsers().observeAsState(listOf())
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -131,10 +134,20 @@ fun SignUp(navController: NavController, userViewModel: UserViewModel) {
                 }
                 else {
                     if(pass == pass_confirm){
-                        val encodeUser = userViewModel.encodeEmail(username)
-                        val userData = UserData(user = encodeUser, pass = pass)
-                        userViewModel.saveUser(userData, context)
-                        navController.navigate("signInData/$encodeUser/$pass")
+
+
+                        if(username !in userList.map { it.user }){
+                            val encodeUser = userViewModel.encodeEmail(username)
+                            val userData = UserData(user = encodeUser, pass = pass)
+                            userViewModel.saveUser(userData, context)
+                            navController.navigate("signInData/$encodeUser/$pass")
+
+                        }
+                        else {
+                            showAlertDialog(context, "Error", "Tài khoản đã tồn tại")
+
+                        }
+
                     }
                     else{
                        showAlertDialog(context, "Error", "Mât khẩu không trùng khớp")

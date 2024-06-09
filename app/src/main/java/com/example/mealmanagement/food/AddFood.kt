@@ -10,6 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -137,4 +139,20 @@ fun ButtonAdd(text: String, onClick: () -> Unit) {
             Text(text = text, color = BlackText)
         }
     }
+}
+
+fun formatCookingMethod(method: String): AnnotatedString {
+    val formattedMethod = method
+        .replace("+", "\n+")
+        .replace("-", "\n-")
+
+    val annotatedString = buildAnnotatedString   {
+        val parts = formattedMethod.split("\n")
+        for (part in parts) {
+            append(part)
+            append("\n")
+        }
+    }
+
+    return annotatedString
 }

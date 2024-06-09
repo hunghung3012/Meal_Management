@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -59,45 +60,66 @@ fun DetailFood(navController: NavController,foodId:String,mealId:String,foodView
         Column {
 //            BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0,navController )
             ImageFromUrl(imageUrl = food.img, modifier = Modifier.fillMaxWidth().height(300.dp))
-            Column(
+            LazyColumn(
                 modifier = Modifier.padding(20.dp)
             ) {
+                item{
+                    DetailFoodItem("Tên",food.name)
+                }
+                item {
+                    DetailFoodItem("Lượng calo","${food.totalCalo} kcal")
+                }
+                item {
+                    DetailFoodItem("Thành phần",
+                        "${formatCookingMethod(food.element)}"
+                    )
+                }
+                item {
+                    DetailFoodItem("Cách chế biến",
+                        "${formatCookingMethod(food.method)}"
+                    )
+                }
+                item {
+                    DetailFoodItem("Địa chỉ",
+                        "${food.address}"
+                    )
+                }
+                item {
 
-                DetailFoodItem("Tên",food.name)
-                DetailFoodItem("Lượng calo","${food.totalCalo} kcal")
-                DetailFoodItem("Thành phần",
-                      "+ 1 bánh mì không"
-                            +"\n+ 1 Miếng thịt bò"
-                            +"\n+ 1 Lát Cà Chua"
-                )
-                DetailFoodItem("Cách chế biến",
-                    "${food.method}"
-                )
-                DetailFoodItem("Địa chỉ",
-                    "${food.address}"
-                )
-
-                ButtonChange(
-                    navController,
-                    count,
-                    {count++},
-                    {if(count>1)  count--},
+                    ButtonChange(
+                        navController,
+                        count,
+                        {count++},
+                        {if(count>1)  count--},
                         {
                             //add to cart
-                         detailMealViewModel.saveDetailMeal(
-                             DetailMealData(
-                                 idMeal = mealId,
-                                 idFood = foodId,
-                                 quantity = count,
+                            detailMealViewModel.saveDetailMeal(
+                                DetailMealData(
+                                    idMeal = mealId,
+                                    idFood = foodId,
+                                    quantity = count,
 
-                                 ),
-                             context
-                         )
+                                    ),
+                                context
+                            )
 
 
 
-                    }
-                )
+                        }
+                    )
+
+
+                }
+                item {
+                    Spacer(modifier = Modifier.height(300.dp))
+                }
+
+
+
+
+
+
+
             }
         }
 

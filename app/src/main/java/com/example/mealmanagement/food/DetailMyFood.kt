@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -61,44 +62,74 @@ fun DetailMyFood(navController: NavController,detail:DetailMealData,foodViewMode
     BaseScreen(navController) {
         Column {
             BannerItem(height = 240, img = R.drawable.banner_3, text = "", fontSize =0,navController )
-            Column(
+            LazyColumn(
                 modifier = Modifier.padding(20.dp)
             ) {
 
-                DetailFoodItem2("Tên",food.name)
-                DetailFoodItem2("Lượng calo","${food.totalCalo} kcal")
-                DetailFoodItem2("Thành phần",
-                    "+ 1 bánh mì không"
-                            +"\n+ 1 Miếng thịt bò"
-                            +"\n+ 1 Lát Cà Chua"
-                )
-                DetailFoodItem2("Cách chế biến",
-                    "${food.method}"
-                )
-                DetailFoodItem2("Địa chỉ",
-                    "${food.address}"
-                )
+                item {
+                    DetailFoodItem2("Tên",food.name)
 
-                ButtonChange2(
-                    navController,
-                    count,
-                    {count++},
-                    {if(count>1)  count--},
-                    {
-                        //aupdate to cart
-                        var detailMealItem = DetailMealData(detail.idDetailMeal,detail.idMeal,detail.idFood,count)
-                        detailMealViewModel.updateDetailMeal(detailMealItem,context)
-                        navController.navigateUp()
+                }
+                item {
+                    DetailFoodItem2("Lượng calo","${food.totalCalo} kcal")
+
+                }
+                item {
+                    DetailFoodItem2("Thành phần",
+                        "${formatCookingMethod(food.element)}"
+                    )
+
+                }
+                item {
+
+                    DetailFoodItem2("Cách chế biến",
+                        "${formatCookingMethod(food.method)}"
+                    )
+                }
+                item {
 
 
-                    },
-                    {
-                        //remove from cart
-                           detailMealViewModel.deleteDetailMealsByID(detail.idDetailMeal,context)
+                }
+                item {
+                    DetailFoodItem2("Địa chỉ",
+                        "${food.address}"
+                    )
+
+                }
+                item {
+                    ButtonChange2(
+                        navController,
+                        count,
+                        {count++},
+                        {if(count>1)  count--},
+                        {
+                            //aupdate to cart
+                            var detailMealItem = DetailMealData(detail.idDetailMeal,detail.idMeal,detail.idFood,count)
+                            detailMealViewModel.updateDetailMeal(detailMealItem,context)
                             navController.navigateUp()
 
-                    }
-                )
+
+                        },
+                        {
+                            //remove from cart
+                            detailMealViewModel.deleteDetailMealsByID(detail.idDetailMeal,context)
+                            navController.navigateUp()
+
+                        }
+                    )
+
+
+                }
+                item {
+                    Spacer(modifier = Modifier.height(200.dp))
+                }
+
+
+
+
+
+
+
             }
         }
 

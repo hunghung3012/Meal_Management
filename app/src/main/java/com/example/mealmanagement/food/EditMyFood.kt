@@ -45,8 +45,12 @@ fun EditMyFood(navController: NavController, foodViewModel: FoodViewModel, foodI
                 name = TextFieldValue(food!!.name),
                 calories = TextFieldValue(food!!.totalCalo.toString()),
                 imageUrl = TextFieldValue(food!!.img),
-                ingredients = TextFieldValue(food!!.element),
-                instructions = TextFieldValue(food!!.method),
+                ingredients = TextFieldValue(
+                    "${formatCookingMethod(food!!.element)}"
+                ),
+                instructions = TextFieldValue(
+                    "${formatCookingMethod(food!!.method)}"
+                ),
                 address = TextFieldValue(food!!.address)
             )
         }
