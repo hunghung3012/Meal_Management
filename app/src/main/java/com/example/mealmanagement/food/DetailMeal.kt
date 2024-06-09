@@ -381,7 +381,7 @@ fun TimeMealItem(nameOfFood:String,calo:String,quantity: Int,onClick:()->Unit ){
                         modifier = Modifier.width(250.dp)
                     )
                     Text(
-                        text = quantity.toString()+" cái",
+                        text = "SL: "+quantity.toString(),
                         color = BlackText,
                         fontSize = 16.sp,
 //                        fontFamily = ,

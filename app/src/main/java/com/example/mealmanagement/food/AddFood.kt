@@ -3,6 +3,7 @@ package com.example.mealmanagement.food
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -10,9 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.text.isDigitsOnly
 import androidx.navigation.NavController
 import com.example.mealmanagement.R
 import com.example.mealmanagement.home.BaseScreen
@@ -34,7 +37,7 @@ data class FoodFormState(
 fun AddFood(navController: NavController, foodViewModel: FoodViewModel) {
     var formState by remember { mutableStateOf(FoodFormState()) }
     var context = LocalContext.current
-    var idUser = session.data?:"None"
+    var idUser = session.data ?: "None"
     BaseScreen(navController) {
         Column(
             modifier = Modifier.padding(12.dp)
@@ -47,7 +50,9 @@ fun AddFood(navController: NavController, foodViewModel: FoodViewModel) {
                     DetailFoodToAdd("Tên*", formState.name) { formState = formState.copy(name = it) }
                 }
                 item {
-                    DetailFoodToAdd("Tổng Calo", formState.calories) { formState = formState.copy(calories = it) }
+                    DetailFoodToAdd("Tổng Calo", formState.calories, keyboardType = KeyboardType.Number) {
+                        formState = formState.copy(calories = it)
+                    }
                 }
                 item {
                     DetailFoodToAdd("Hình Ảnh", formState.imageUrl) { formState = formState.copy(imageUrl = it) }
@@ -62,21 +67,20 @@ fun AddFood(navController: NavController, foodViewModel: FoodViewModel) {
                     DetailFoodToAdd("Địa chỉ", formState.address, isLong = true) { formState = formState.copy(address = it) }
                 }
                 item {
-                    ButtonAdd {
+                    ButtonAdd("Thêm") {
                         foodViewModel.saveFood(
                             FoodData(
                                 idFood = "",
-                                name= formState.name.text,
+                                name = formState.name.text,
                                 img = formState.imageUrl.text,
                                 element = formState.ingredients.text,
                                 totalCalo = formState.calories.text.toDouble(),
-                                method =formState.instructions.text ,
-                                address =formState.address.text,
+                                method = formState.instructions.text,
+                                address = formState.address.text,
                                 idUser = idUser
-
                             ),
-                            context = context)
-
+                            context = context
+                        )
                     }
                 }
                 item {
@@ -92,10 +96,13 @@ fun DetailFoodToAdd(
     label: String,
     value: TextFieldValue,
     isLong: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text,
     onValueChange: (TextFieldValue) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth().padding(vertical = 5.dp)
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 5.dp)
     ) {
         Text(
             text = "$label: ",
@@ -109,13 +116,14 @@ fun DetailFoodToAdd(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(if (isLong) 100.dp else 56.dp),
-            singleLine = !isLong
+            singleLine = !isLong,
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = keyboardType)
         )
     }
 }
 
 @Composable
-fun ButtonAdd(onClick: () -> Unit) {
+fun ButtonAdd(text: String, onClick: () -> Unit) {
     Row(
         Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -126,7 +134,7 @@ fun ButtonAdd(onClick: () -> Unit) {
             colors = ButtonDefaults.buttonColors(containerColor = GreenBackGround),
             onClick = onClick
         ) {
-            Text(text = "Thêm", color = BlackText)
+            Text(text = text, color = BlackText)
         }
     }
 }

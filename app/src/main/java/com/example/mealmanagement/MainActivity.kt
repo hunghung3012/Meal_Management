@@ -38,9 +38,11 @@ import com.example.mealmanagement.model.FoodData
 import com.example.mealmanagement.model.MealData
 import com.example.mealmanagement.model.MenuData
 import com.example.mealmanagement.session.session
-import com.example.mealmanagement.test.AddDataScreen
-import com.example.mealmanagement.test.GetDataScreen
-import com.example.mealmanagement.test.SharedViewModel
+
+import com.example.mealmanagement.sign.SignIn
+import com.example.mealmanagement.sign.SignUp
+
+
 import com.example.mealmanagement.ui.theme.MealManagementTheme
 import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
@@ -49,7 +51,7 @@ import com.example.mealmanagement.viewmodel.MenuViewModel
 
 
 class MainActivity : ComponentActivity() {
-    private val sharedViewModel: SharedViewModel by viewModels()
+
     private val menuViewModel: MenuViewModel by viewModels()
     private val foodViewModel: FoodViewModel by viewModels()
     private val detailMealViewModel: DetailMealViewModel by viewModels()
@@ -65,8 +67,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    session.data = "User1"
+//                    session.data = "User1"
                     Navigation()
+//                    SignUp()
 
 //                    addTestDetailMeals()
                 }

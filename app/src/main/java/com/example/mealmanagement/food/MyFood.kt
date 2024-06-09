@@ -92,7 +92,7 @@ fun MyFood(navController: NavController,foodViewModel: FoodViewModel) {
                 foodList.forEach{food->
                     item {
                         SingleMyMeal(food.name) {
-
+                            navController.navigate("editMyFood/${food.idFood}")
                         }
                         Spacer(modifier = Modifier.height(10.dp))
                     }

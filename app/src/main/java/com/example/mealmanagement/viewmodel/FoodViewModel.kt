@@ -86,10 +86,10 @@ class FoodViewModel : ViewModel() {
         return foodList
     }
 
-    fun updateFood(food: FoodData) = CoroutineScope(Dispatchers.IO).launch {
+    fun updateFood(food: FoodData,context: Context) = CoroutineScope(Dispatchers.IO).launch {
         databaseReference.child(food.idFood).setValue(food)
             .addOnSuccessListener {
-                // Handle success here
+                Toast.makeText(context, "Successfully saved data", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 // Handle error here

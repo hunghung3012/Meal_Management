@@ -12,6 +12,7 @@ import com.example.mealmanagement.food.AddFood
 import com.example.mealmanagement.food.DetailFood
 import com.example.mealmanagement.food.DetailMeal
 import com.example.mealmanagement.food.DetailMyFood
+import com.example.mealmanagement.food.EditMyFood
 import com.example.mealmanagement.food.FindFood
 import com.example.mealmanagement.food.ListDay
 import com.example.mealmanagement.food.ListMeal
@@ -19,10 +20,14 @@ import com.example.mealmanagement.food.MyFood
 import com.example.mealmanagement.home.Home
 import com.example.mealmanagement.model.DetailMealData
 import com.example.mealmanagement.route.Screen
+import com.example.mealmanagement.sign.EditInforUser
+import com.example.mealmanagement.sign.SignIn
+import com.example.mealmanagement.sign.SignUp
 import com.example.mealmanagement.viewmodel.DetailMealViewModel
 import com.example.mealmanagement.viewmodel.FoodViewModel
 import com.example.mealmanagement.viewmodel.MealViewModel
 import com.example.mealmanagement.viewmodel.MenuViewModel
+import com.example.mealmanagement.viewmodel.UserViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -32,7 +37,8 @@ fun Navigation() {
     val foodViewModel: FoodViewModel = viewModel()
     val mealViewModel: MealViewModel = viewModel()
     val detailMealViewModel: DetailMealViewModel = viewModel()
-    NavHost(navController = navController, startDestination = "listMeal") {
+    val userViewModel: UserViewModel = viewModel()
+    NavHost(navController = navController, startDestination = "signIn") {
         composable("home") {
             Home(navController)
         }
@@ -75,10 +81,33 @@ fun Navigation() {
             AddFood(navController = navController,foodViewModel)
         }
         composable("myListFood") { backStackEntry ->
-
-
             MyFood(navController = navController,foodViewModel)
         }
+            composable("editMyFood/{foodId}") { backStackEntry ->
+            val foodId = backStackEntry.arguments?.getString("foodId")
+            EditMyFood(navController = navController, foodViewModel = foodViewModel, foodId =foodId.toString() )
+        }
+
+
+        composable("signIn") {
+            SignIn(navController,userViewModel)
+        }
+        composable("signInData/{user}/{pass}") { backStackEntry ->
+            val user = backStackEntry.arguments?.getString("user")
+            val pass = backStackEntry.arguments?.getString("pass")
+            SignIn(navController,userViewModel,userViewModel.decodeEmail(user.toString()),pass.toString())
+        }
+        composable("signUp") {
+            SignUp(navController,userViewModel)
+        }
+
+        composable("editInfo/{userID}") { backStackEntry ->
+            val userID = backStackEntry.arguments?.getString("userID")
+            EditInforUser(navController,userViewModel,userID.toString())
+        }
+
+
+
     }
 
 }
